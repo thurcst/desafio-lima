@@ -1,6 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from reader import Reader
 
+import json
 import logging
 
 logging.basicConfig(
@@ -14,38 +15,134 @@ logger = logging.getLogger(__name__)
 app = FastAPI()
 
 
+@app.get("/noticias")
+async def noticias():
+    logger.info("Starting collect proccess from noticias table.")
+    reader = Reader()
+
+    query = """
+    SELECT *
+    FROM `adrenaline_transient.noticias`
+    """
+
+    try:
+        data = reader.query_from_bq(query)
+        status = 200
+
+    except Exception as e:
+        data = "Error while extracting data. {}".format(e)
+        status = 400
+
+    data = json.dumps(data)
+
+    return Response(content=data, status_code=status)
+
+
+@app.get("/analises")
+async def analises():
+    logger.info("Starting collect proccess from analises table.")
+    reader = Reader()
+
+    query = """
+    SELECT *
+    FROM `adrenaline_transient.analises`
+    """
+    try:
+        data = reader.query_from_bq(query)
+        status = 200
+
+    except Exception as e:
+        data = "Error while extracting data. {}".format(e)
+        status = 400
+
+    data = json.dumps(data)
+
+    return Response(content=data, status_code=status)
+
+
 @app.get("/artigos")
 async def artigos():
+    logger.info("Starting collect proccess from artigos table.")
     reader = Reader()
 
     query = """
     SELECT *
     FROM `adrenaline_transient.artigos`
     """
+    try:
+        data = reader.query_from_bq(query)
+        status = 200
 
-    data = reader.query_from_bq(query)
+    except Exception as e:
+        data = "Error while extracting data. {}".format(e)
+        status = 400
 
-    return data
+    data = json.dumps(data)
+
+    return Response(content=data, status_code=status)
 
 
 @app.get("/artigos/keywords")
-async def artigos_by_keyword(keywords: str | None = None):
+async def artigos_by_keyword(keywords: str):
     reader = Reader()
 
-    query = """
+    query = f"""
     SELECT *
     FROM `adrenaline_transient.artigos`
+    WHERE '{keywords}' IN UNNEST(tags)
     """
+    try:
+        data = reader.query_from_bq(query)
+        status = 200
 
-    if keywords:
-        filter_params = f"""
-        WHERE '{keywords}' IN UNNEST(tags)
-        """
+    except Exception as e:
+        data = "Error while extracting data. {}".format(e)
+        status = 400
 
-        query = query + filter_params
+    data = json.dumps(data)
 
-        logger.debug(query)
+    return Response(content=data, status_code=status)
 
-    data = reader.query_from_bq(query)
 
-    return data
+@app.get("/noticias/keywords")
+async def noticias_by_keyword(keywords: str):
+    reader = Reader()
+
+    query = f"""
+    SELECT *
+    FROM `adrenaline_transient.noticias`
+    WHERE '{keywords}' IN UNNEST(tags)
+    """
+    try:
+        data = reader.query_from_bq(query)
+        status = 200
+
+    except Exception as e:
+        data = "Error while extracting data. {}".format(e)
+        status = 400
+
+    data = json.dumps(data)
+
+    return Response(content=data, status_code=status)
+
+
+@app.get("/analises/keywords")
+async def analises_by_keyword(keywords: str):
+    reader = Reader()
+
+    query = f"""
+    SELECT *
+    FROM `adrenaline_transient.analises`
+    WHERE '{keywords}' IN UNNEST(tags)
+    """
+    try:
+        data = reader.query_from_bq(query)
+        status = 200
+
+    except Exception as e:
+        data = "Error while extracting data. {}".format(e)
+        status = 400
+
+    data = json.dumps(data)
+
+    return Response(content=data, status_code=status)

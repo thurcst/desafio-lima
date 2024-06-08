@@ -1,4 +1,4 @@
-from adrenaline.spiders import artigos, analises, noticias
+from adrenaline.adrenaline.spiders import artigos, analises, noticias
 from scrapy.utils.project import get_project_settings
 from scrapy.crawler import CrawlerProcess
 
@@ -40,7 +40,7 @@ def main(args):
     settings.set(
         "ITEM_PIPELINES",
         {
-            "adrenaline.pipelines.BigqueryPipeline": 300,
+            "adrenaline.adrenaline.pipelines.BigqueryPipeline": 300,
         },
     )
     settings.set("BIGQUERY_PROJECT_ID", "lima-project-425805")

@@ -1,7 +1,7 @@
 from google.oauth2 import service_account
 from scrapy.exceptions import DropItem
 from google.cloud import bigquery
-from schema import TABLE_SCHEMA
+from adrenaline.schema import TABLE_SCHEMA
 
 import logging
 import json

@@ -1,5 +1,5 @@
-from adrenaline.spiders.utility import clean_data, clean_text
-from adrenaline.items import AdrenalineItem
+from adrenaline.adrenaline.spiders.utility import clean_data, clean_text
+from adrenaline.adrenaline.items import AdrenalineItem
 
 import scrapy.http
 import scrapy
