@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+from adrenaline.spiders.utility import clean_data
 import scrapy.http
 import scrapy
 
@@ -18,15 +19,17 @@ class ArtigosSpider(scrapy.Spider):
             hat = response.css("p.feed-hat::text").get()
             tags = [x[1:] for x in article.css("ul.feed-tags li a::text").getall()]
 
+            metadata = {
+                "url": first_anchor,
+                "title": title,
+                "hat": hat,
+                "tags": tags,
+            }
+
+            metadata = clean_data(metadata)
+
             yield response.follow(
-                url=first_anchor,
-                callback=self.parse_article_page,
-                meta={
-                    "url": first_anchor,
-                    "title": title,
-                    "hat": hat,
-                    "tags": tags,
-                },
+                url=first_anchor, callback=self.parse_article_page, meta=metadata
             )
 
     def parse_article_page(self, response: scrapy.http.Response):
@@ -48,7 +51,7 @@ class ArtigosSpider(scrapy.Spider):
         for author in authors_element:
             # The first element of those lists are, in most of times, the caracter '\n'
             # using [-1] we will extract only the last element form the array
-            authors.append(author.css("li > a::text").getall()[-1])
+            authors.append(author.css("li > a::text").getall()[-1].strip())
 
         # variables from `parse` function context
         meta = response.request.meta

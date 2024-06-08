@@ -51,11 +51,12 @@ No meu dia a dia não faço uso de web scrapping no contexto em que trabalho. En
 
 ### Lista de tarefas
 
+-   [x] Revisar conteúdos sobre Web Scrapping
 -   [x] (2024/06/07) Criação de Spiders
     -   [x] (2024/06/07) Artigos
     -   [x] (2024/06/07) Notícias
     -   [x] (2024/06/08) Análises
 -   [x] (2024/06/08) Armazenamento no Big Query
--   [ ] Leitura do Big Query
--   [ ] Criação da API
--   [ ] Integração do BigQuery na API
+-   [x] (2024/06/08) Leitura do Big Query
+-   [x] (2024/06/08) Criação da API
+-   [x] (2024/06/08) Integração do BigQuery na API
