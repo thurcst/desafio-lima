@@ -1,3 +1,5 @@
+"""Implementation of Loader class, which is responsible for collect data and export to GBQ."""
+
 from google.oauth2 import service_account
 from google.cloud import bigquery
 from typing import IO, List, Dict
@@ -6,6 +8,8 @@ PATH = "/home/costa/Documentos/desafio_lima/credentials.json"
 
 
 class Loader:
+    """Loader class job is load information to bigquery table."""
+
     def __init__(
         self,
         namespace: str,
@@ -40,7 +44,7 @@ class Loader:
             bigquery.SchemaUpdateOption.ALLOW_FIELD_ADDITION,
             bigquery.SchemaUpdateOption.ALLOW_FIELD_RELAXATION,
         ]
-        job_cfg.write_disposition = bigquery.WriteDisposition.WRITE_APPEND
+        job_cfg.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE
         job_cfg.schema = schema
         job_cfg.time_partitioning = bigquery.TimePartitioning()
 
