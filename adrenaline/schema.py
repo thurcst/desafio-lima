@@ -6,6 +6,5 @@ TABLE_SCHEMA = [
     SchemaField("authors", "STRING", mode="REPEATED"),
     SchemaField("hat", "STRING"),
     SchemaField("tags", "STRING", mode="REPEATED"),
-    SchemaField("article_text", "STRING"),
-    SchemaField("category", "STRING"),
+    SchemaField("text", "STRING"),
 ]

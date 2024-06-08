@@ -7,6 +7,10 @@ import scrapy
 
 
 class AdrenalineItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+
+    url = scrapy.Field()
+    title = scrapy.Field()
+    authors = scrapy.Field()
+    hat = scrapy.Field()
+    tags = scrapy.Field()
+    text = scrapy.Field()

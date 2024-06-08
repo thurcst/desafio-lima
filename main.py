@@ -1,9 +1,8 @@
-from loader import Loader
-from google.cloud.bigquery import SchemaField
-from schema import TABLE_SCHEMA
+from adrenaline.spiders import artigos, analises, noticias
+from scrapy.utils.project import get_project_settings
+from scrapy.crawler import CrawlerProcess
 
 import argparse
-import json
 import logging
 
 logging.basicConfig(
@@ -18,34 +17,52 @@ DATA_PATH = "/home/costa/Documentos/desafio_lima/data"
 
 
 def main(args):
-    loader = Loader(namespace="adrenaline", zone="transient")
+    """Receive the page and the operation from args and run spider to extract data.
 
+    Data extracted here will be uploaded to BigQuery inside the `page` table on `lima-project` dataset.
+
+    Args:
+        args (sysargs): --page (-p)
+
+    Raises:
+        ValueError: Error when page is not specified
+    """
     page = args.page
-    operation = args.operation
 
-    if page = None:
-        raise("O argumento --page não foi fornecido")
+    crawlers = {
+        "artigos": artigos.ArtigosSpider,
+        "noticias": noticias.NoticiasSpider,
+        "analises": analises.AnalisesSpider,
+    }
 
-    if operation == None:
-        operation = "load"
+    # Configure default Settings
+    settings = get_project_settings()
+    settings.set(
+        "ITEM_PIPELINES",
+        {
+            "adrenaline.pipelines.BigqueryPipeline": 300,
+        },
+    )
+    settings.set("BIGQUERY_PROJECT_ID", "lima-project-425805")
+    settings.set("BIGQUERY_DATASET_ID", "adrenaline_transient")
 
-    with open(file=f"{DATA_PATH}/{page}.json") as f:
-        data = json.load(f)
-        
-        if operation == "load":
-            loader.write_json_data(json_content=data, table_name="artigos", schema=TABLE_SCHEMA)
+    # Start extraction
+    procces = CrawlerProcess(settings)
+    procces.crawl(crawlers[page])
+    procces.start()
 
 
 if __name__ == "__main__":
-    
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "--page", "-p", type=str, help="Page to be loaded or extracted."
+        "--page",
+        "-p",
+        type=str,
+        required=True,
+        help="Page to be loaded or extracted.",
     )
-    parser.add_argument(
-        "--operation", "-o", type=str, help="Page to be loaded or extracted."
-    )
+
     args = parser.parse_args()
-    
+
     main(args)
